@@ -1,0 +1,70 @@
+<% layout('layouts/app') %>
+
+<div class="row">
+  <div class="col-6">
+    <div class="card">
+      <img src="<%= place.image %>" class="card-img-top" alt="<%= place.title %>" />
+      <div class="card-body">
+        <h5 class="card-title"><%= place.title %></h5>
+        <p class="card-text"><%= place.description %></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><%= place.location %></li>
+        <li class="list-group-item text-end"><small class="fst-italic">Author: <%= place.author.username %></small></li>
+        <li class="list-group-item"><%= place.price %></li>
+      </ul>
+      <% if(currentUser && place.author.equals(currentUser._id)) { %>
+      <div class="card-body">
+        <a href="/places/<%= place._id %>/edit" class="card-link btn btn-warning text-white">Edit</a>
+        <form action="/places/<%= place._id %>?_method=DELETE" method="POST" style="display: inline !important">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="col-4">
+    <% if(currentUser) { %>
+    <h3>Leave a Review</h3>
+    <form action="/places/<%= place._id %>/reviews" method="POST" class="validated-form" novalidate>
+      <div class="mb-3">
+        <label for="rating">Rating</label>
+        <input type="range" name="review[rating]" id="rating" class="form-range" min="1" max="5" />
+      </div>
+      <div class="mb-3">
+        <label for="review">Review</label>
+        <textarea name="review[body]" id="body" cols="30" rows="5" class="form-control" required></textarea>
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+      </div>
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+    <% } %> <% for(const review of place.reviews) { %>
+    <div class="card my-4">
+      <div class="card-body">
+        <h5 class="card-title">Rating: <%= review.rating %></h5>
+        <p class="card-text"><%= review.body %></p>
+        <% if(currentUser && review.author.equals(currentUser._id)) { %>
+        <form action="/places/<%= place._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" style="display: inline !important">
+          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- <h1><%= place.title %></h1>
+<img src="<%= place.image %>" alt="<%= place.title %>" />
+<h2><%= place.location %></h2>
+<p><%= place.description %></p>
+<h2><%= place.price %></h2>
+
+<form action="/places/<%= place._id %>?_method=DELETE" method="POST" style="display: inline !important">
+  <button type="submit">Delete</button>
+</form>
+
+<a href="/places/<%= place._id %>/edit">Edit</a>
+<a href="/places">All Places</a> -->
